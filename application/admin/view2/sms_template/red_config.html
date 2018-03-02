@@ -1,0 +1,97 @@
+<include file="public/layout" />
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<style>
+    .err{color:#F00; display:none;}
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>系统 - 红包雨基础设置</h3>
+                <h5>红包雨基础设置</h5>
+            </div>
+            <ul class="tab-base nc-row">
+                <li><a href="{:U('SmsTemplate/signList')}" <if condition="$action_name eq 'signList'">class="current"</if>><span>红包雨列表</span></a></li>
+                <li><a href="{:U('SmsTemplate/red_config')}" <if condition="$action_name eq 'red_config'">class="current"</if>><span>红包雨设置 </span></a></li>
+            </ul>
+        </div>
+    </div>
+    <form class="form-horizontal" id="handleposition" action="{:U('SmsTemplate/red_config')}" method="post" onsubmit="return check();">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="level_name"><em>*</em>用户中奖次数设置</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="red_drawn_num" value="{$config_redrain.red_drawn_num}" id="red_drawn_num" class="input-txt">次
+                    <span class="err" id="err_level_name"></span>
+                    <p class="notic">设置用户中奖次数</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="level_name"><em>*</em>用户中奖金额区间</label>
+                </dt>
+                <dd class="opt">
+                    <input type="number" name="red_1" value="{$config_redrain.red_1}" id="red_1" class="input-txt">元:
+                    <input type="number" name="red_2" value="{$config_redrain.red_2}" id="red_2" class="input-txt">元
+                    <span class="err" id="err_level_name">包括填写的值(>=  <=)</span>
+                    <p class="notic">设置用户中奖金额区间</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="level_name"><em>*</em>用户中奖几率</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="red_click_drawn_rate" value="{$config_redrain.red_click_drawn_rate}" id="red_click_drawn_rate" class="input-txt">%
+                    <span class="err" id="err_level_name"></span>
+                    <p class="notic">设置用户中奖几率设置</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="level_name"><em>*</em>每次活动用户中奖的额度上限</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="red_click_max_money" value="{$config_redrain.red_click_max_money}" id="red_click_max_money" class="input-txt">元
+                    <span class="err" id="err_level_name"></span>
+                    <p class="notic">设置每次用户中奖的额度区间</p>
+                </dd>
+            </dl>
+           <div class="bot"><input type="submit" id="button" class=submit-border submit" value="确认提交" />
+        </div>
+    </form>
+    <br/>
+    <br/>
+</div>
+<script type="text/javascript">
+	$(".laydate-icon").focus(function(){
+        laydate({
+            format: 'YYYY-MM-DD hh:mm', // 分隔符可以任意定义，该例子表示只显示年月
+            istime: true, //是否开启时间选择
+            isclear : true,
+            istoday : true,
+            issure : true
+        });
+    });
+
+	function check(){
+
+	    if($("#red_1").val()=="" || $("#red_2").val()==""){
+	        layer.alert("请填写用户中奖区间");
+	        return false;
+        }
+
+        if($("#red_click_max_money").val()=="" || $("#red_click_drawn_rate").val()=="" || $("#red_drawn_num").val()==""){
+            layer.alert("请补充必填信息!");
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

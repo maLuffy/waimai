@@ -1,0 +1,232 @@
+<include file="public/layout" />
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title">
+            <div class="subject">
+                <h3>创业者</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="flexigrid">
+        <div class="mDiv">
+            <form class="navbar-form form-inline" style="float:left" action="{:url('Admin/user/startup')}" id="search-form" method="get">
+                <div class="sDiv">
+                    <div class="sDiv2">
+                        <input type="button" class="btn" value="订单号:">
+                        <input type="text" name="apply_order_sn" size="30" value="{$Think.get.apply_order_sn}" class="qsbox" placeholder="">
+                    </div>
+                    <div class="sDiv2">
+                        <input type="button" class="btn" value="会员昵称:">
+                        <input type="text" name="nickname" size="30" value="{$Think.get.nickname}" class="qsbox" placeholder="">
+                    </div>
+                    <div class="sDiv2">
+                        <input type="button" class="btn" value="会员手机:">
+                        <input type="number" name="mobile" size="30" value="{$Think.get.mobile}" class="qsbox" placeholder="">
+                    </div>
+                    <div class="sDiv2">
+                        <select name="status" id="auth_status">
+                            <option value="">全部</option>
+                            <option value="10" <if condition="$Think.get.status eq 10">selected</if>>待审核</option>
+                            <option value="1" <if condition="$Think.get.status eq 1">selected</if>>审核成功</option>
+                            <option value="2" <if condition="$Think.get.status eq 2">selected</if>>审核失败</option>
+                        </select>
+                    </div>
+                    <div class="sDiv2">
+                        <input type="submit" class="btn"  value="搜索">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0">
+                    <thead>
+                    <tr>
+                        <th class="sign" axis="col0">
+                            <div style="width: 24px;"><i class="ico-check"></i></div>
+                        </th>
+                        <th align="left" abbr="article_title" axis="col3" class="">
+                            <div style="text-align: left; width: 150px;" class="">申请单号</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 210px;" class="">联系人</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">联系人电话</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">推荐人</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">推荐人电话</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">保证金额</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">个人/企业</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">审核状态</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">保证金是否支付</div>
+                        </th>
+
+                        <th align="center" abbr="article_time" axis="col6" class="">
+                            <div style="text-align: center; width: 100px;" class="">是否退款</div>
+                        </th>
+                        <!--<th align="center" abbr="article_time" axis="col6" class="">
+                            <div style="text-align: center; width: 100px;" class="">申请时间</div>
+                        </th>-->
+                        <th align="center" abbr="article_time" axis="col6" class="">
+                            <div style="text-align: center; width: 100px;" class="">操作</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table>
+                    <tbody>
+                    <foreach name="lists" item="vo" key="k" >
+                        <tr>
+                            <td class="sign">
+                                <div style="width: 24px;"><i class="ico-check"></i></div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 150px;">{$vo.apply_order_sn}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 210px;">{$vo.contact_people}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 100px;">{$vo.contact_phone}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 100px;">{$vo.recommend_people}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 100px;">{$vo.recommend_phone}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 100px;">{$vo.bail_cash}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 100px;">
+                                    <switch name="$vo.apply_type">
+                                        <case value="1">个人</case>
+                                        <case value="2">企业</case>
+                                    </switch>
+                                </div>
+                            </td>
+                            <td align="center" class="">
+                                <div style="text-align: left; width: 100px;">
+                                    <switch name="$vo.status">
+                                        <case value="0">待审核</case>
+                                        <case value="1">审核成功</case>
+                                        <case value="2">审核失败</case>
+                                    </switch>
+                                </div>
+                            </td>
+                            <td align="center" class="">
+                                <div style="text-align: left; width: 100px;">
+                                    <switch name="$vo.pay_status">
+                                        <case value="0">未支付</case>
+                                        <case value="1">已支付</case>
+                                    </switch>
+                                </div>
+                            </td>
+
+                            <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    <switch name="$vo.is_refund">
+                                        <case value="0">未退款</case>
+                                        <case value="1">退款</case>
+                                    </switch>
+                                </div>
+                            </td>
+                            <!--<td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    {$vo.create_time||date='Y-m-d',###}
+                                </div>
+                            </td>-->
+                            <td align="" class="" style="width: 100%;">
+                                <div><a href="{:url('Admin/user/startup_info',array('id'=>$vo.id))}">查看</a>
+                                    <!--<a href="{:url('Admin/user/shareholder_del',array('table'=>'user_startup','id'=>$vo.id))}">删除</a>-->
+                                </div>
+                            </td>
+                            
+                            <!-- <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    有效
+                                </div>
+                            </td>
+                            <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    {$vo.current_points}
+                                </div>
+                            </td>
+                            <td align="" class="" style="width: 100%;">
+                                <div>&nbsp;11111</div>
+                            </td> -->
+                        </tr>
+                    </foreach>
+                    </tbody>
+                </table>
+            </div>
+            {$page}
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <!--分页位置-->
+         </div>
+</div>
+<script>
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+
+    });
+
+
+    function delfun(obj) {
+        // 删除按钮
+        layer.confirm('确认删除？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: 'post',
+                url: $(obj).attr('data-url'),
+                data : {act:'del',id:$(obj).attr('data-id')},
+                dataType: 'json',
+                success: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        layer.msg(data.msg, {icon: 1});
+                        $(obj).parent().parent().parent().remove();
+                    } else {
+                        layer.alert(data.msg, {icon: 2});
+                    }
+                }
+            })
+        }, function () {
+            layer.closeAll();
+        });
+    }
+</script>
+</body>
+</html>

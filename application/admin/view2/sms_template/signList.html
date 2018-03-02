@@ -1,0 +1,170 @@
+<include file="public/layout"/>
+<style>
+.look_callback{
+  float: right;
+    margin-right: 15px;
+    color: #fdbd00;
+    font-size: 12px;
+    padding: 1px 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #fdbd00;
+    border-image: initial;
+    border-radius: 6px;
+}
+</style>
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+  <div class="fixed-bar">
+    <div class="item-title">
+      <div class="subject">
+        <h3>红包雨设置</h3>
+      </div>
+      <ul class="tab-base nc-row">
+        <!-- <foreach name="Notice_type.child" item="vo">
+          <li><a href="{:U('Reminder/pick_news_index',array('type'=>$key))}" <if condition="$type eq $key">class="current"</if>><span>{$vo}</span></a></li>
+        </foreach> -->
+        <li><a href="{:U('SmsTemplate/signList')}" <if condition="$action_name eq 'signList'">class="current"</if>><span>红包雨列表</span></a></li>
+        <li><a href="{:U('SmsTemplate/red_config')}" <if condition="$action_name eq 'red_config'">class="current"</if>><span>红包雨设置 </span></a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- 操作说明123 -->
+  <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+        <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+            <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+            <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+        </div>
+        <ul>
+            <li>1.只能设置一个开始的红包雨活动状态(如果你想开启活动，其他活动则为关闭状态)</li>
+        </ul>
+    </div>
+    <div class="flexigrid">
+        <div class="mDiv" style="border-bottom:0px;">
+            <div class="ftitle">
+                <h3>红包活动管理</h3>
+                <h5>(共{$count_list}条记录)</h5>
+            </div>
+        </div>
+    </div>
+        <form action="{:U('SmsTemplate/signList')}" id="search-form" method="get">
+            <div class="store_list_top">
+                <!-- <select name="is_state" id="auth_status">
+                    <option value="">全部</option>
+                    <option value="3" <if condition="$Think.post.is_state eq 3 ">selected</if>>待审核</option>
+                    <option value="2" <if condition="$Think.post.is_state eq 2 ">selected</if>>已拒绝</option>
+                    <option value="1" <if condition="$Think.post.is_state eq 1 ">selected</if>>审核通过</option>
+                </select>
+                <select name="is_customer_insurance">
+                    <option value="">车辆保险</option>
+                    <option value="1" <if condition="$Think.post.is_customer_insurance eq 1 ">selected</if>>有</option>
+                    <option value="2" <if condition="$Think.post.is_customer_insurance eq 2 ">selected</if>>无</option>
+                </select> -->
+
+                
+            </div>
+            活动名称:<input type="text" name="select_name" value="{$Think.get.select_name}" placeholder="活动/期号名称">
+            活动时间:
+            <input type="text" name="start_time" id="start_time" value="{$Think.get.start_time}" class="laydate-icon" placeholder="请选择开始时间">至
+            <input type="text" name="end_time" id="end_time" value="{$Think.get.end_time}" class="laydate-icon" placeholder="请选择结束时间">
+            <input type="hidden" name="post_type" value="1">
+            <button class="btn_q" onclick="check()">查询</button>
+            <a href="{:U('SmsTemplate/red_edit')}"><input class="btn_q" type="button" value="新增活动"></a>
+        </form>
+        <table class="tab-q1  tab_q2" style="margin-top: 30px;">
+            <thead>
+            <tr>
+                <th class="li1" style="text-align:center">全部</th>
+                <th class="">活动期号</th>
+                <th class="">活动名称</th>
+                <th class="">开始时间</th>
+                <th calss="">结束时间</th>
+                <th class="">活动状态</th>
+                <th class="">活动总金额</th>
+                <th class="">操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            <foreach name="package" item="vo" key="k">
+                <tr>
+                    <td class="li1" style="text-align:center">{$vo.id}</td>
+                    <td class="">{$vo.active_num}</td>
+                    <td class="">{$vo.active_name}</td>
+                    <td class="">{$vo.start_time|date='Y-m-d',###}</td>
+                    <td class="">{$vo.end_time|date='Y-m-d',###}</td>
+                    <td class="switch"><b id="id_{$vo.status}"  post_id="{$vo.id}" status="{$vo.status}" class="<if condition="$vo.status eq 1">sel</if>"></b></td>
+                    <td class="">{$vo.total_money}</td>
+                    <td class="">
+                        <if condition="$vo.time_over eq 0">
+                            <a class="edit" href="{:U('SmsTemplate/red_edit',array('id'=>$vo['id']))}">查看/编辑</a>
+                            <if condition="$vo.status eq 0">
+                                <a class="edit" href="{:U('SmsTemplate/red_Sponsor',array('id'=>$vo['id']))}">添加赞助商</a>
+                            </if>
+                        <else/>
+                            <a class="edit" href="{:U('SmsTemplate/red_edit',array('id'=>$vo['id']))}">查看</a>
+                        </if>
+                        <a class="edit" href="{:U('SmsTemplate/red_del',array('id'=>$vo['id']))}" onclick="return confirm('确定将此记录删除?')">删除</a>
+                        <a class="edit" href="{:U('SmsTemplate/get_red_user',array('red_id'=>$vo['id']))}">中奖用户</a>
+                    </td>
+                </tr>
+            </foreach>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="flexigrid">
+        <!--分页位置-->
+        {$page} </div>
+</div>
+<script>
+  $(".laydate-icon").focus(function(){
+        laydate({
+            format: 'YYYY-MM-DD hh:mm', // 分隔符可以任意定义，该例子表示只显示年月
+            istime: true, //是否开启时间选择
+            isclear : true,
+            istoday : true,
+            issure : true
+        });
+    });
+
+
+
+  var count_status="0";
+  $(function () {
+        $("#tab_q li").click(function () {
+            $("#tab_q li").removeClass("tab")
+            $(this).addClass("tab")
+        });
+
+        $(".switch b").click(function () {
+            var status=$(this).attr("status");
+            var id=$(this).attr("post_id");
+            count_status="{$count_status}";
+            if(status=='0' && count_status>0){
+                //需要关闭其他活动的状态
+                layer.alert("请关闭其他活动!");
+                return false;
+            }
+            $(this).toggleClass("sel");
+            $.ajax({
+                type : 'post',
+                url : '{:U("SmsTemplate/red_status_edit")}',
+                data : {id:id,status:status},
+                dataType : 'json',
+                success : function(data){
+                    if(data.status=='1'){
+                        $("#id_"+id).attr("is_show",data.data);
+                        window.location.href="<?php echo url('Admin/SmsTemplate/signList'); ?>";
+                        alert("修改成功");
+                    }
+                }
+            })
+        });
+    })
+        
+</script>
+</body>
+</html>

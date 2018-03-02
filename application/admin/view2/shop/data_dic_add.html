@@ -1,0 +1,114 @@
+<include file="public/layout" />
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+  <div class="fixed-bar">
+    <div class="item-title">
+      <div class="subject">
+        <h3>新增数据字典</h3>
+        <h5>网站系统文章索引与管理</h5>
+      </div>
+    </div>
+  </div>
+  <!-- 操作说明 -->
+  <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+    <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+      <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+      <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+    </div>
+    <ul>
+      <!--<li>1.文章管理, 由总平台设置管理.</li>
+      <li>2.小图标尺寸太大，系统会自动转换成72*72。有可能会失真，最好自己订做</li>-->
+    </ul>
+  </div>
+
+  <div class="chartered">
+    <form class="navbar-form form-inline" id="search-form" action="{:U('Shop/data_dic_add')}" onsubmit="return check();" method="post">
+      <div class="data_sz">
+        <section class="sz_set">
+          <span class="input_bef"><em style="color: red;">*</em>行业名称：</span>
+          <input type="text" name="industry_name" class="add_yj" id="industry_name" placeholder="美食" value="{$info.industry_name}">
+        </section>
+          
+		<!--<section class="sz_set">
+		<span class="input_bef">小图标Log：</span>
+			<div class="input-file-show">
+				<span class="show">
+					<a id="img_a" target="_blank" class="nyroModal" rel="gal" href="{$info.img}">
+						<i id="img_i" class="fa fa-picture-o" onmouseover="layer.tips('<img src={$info.img}>',this,{tips: [1, '#fff']});" onmouseout="layer.closeAll();"></i>
+					</a>
+				</span>
+				<span class="type-file-box">
+					<input type="text" id="thumb" name="img" value="{$info.img}" class="type-file-text">
+					<input type="button" name="button" id="button1" value="选择上传..." class="type-file-button">
+					<input class="type-file-file" onClick="GetUploadify(1,'','article','img_call_back')" size="30" title="点击前方预览图可查看大图，点击按钮选择文件并提交表单后上传生效">
+				</span>
+
+			</div>
+
+			<span class="error" style="line-height:28px;font-size:12px;color: #AAA">请上传72*72小图标。</span>
+		</section>
+		<section class="sz_set">
+          <span class="input_bef">排序：</span>
+          <input type="text" name="order_by" class="add_yj" placeholder="排序:默认20" value="{$info.order_by}">
+        </section>
+        -->
+          <section class="sz_set">
+              <span class="input_bef">是否显示：</span>
+              <input id="integral_use_enable0" name="is_show" <if condition='$info.is_show eq 0'>checked</if> value="0" type="radio">否
+              <input id="integral_use_enable1" name="is_show" <if condition='$info.is_show eq 1'>checked</if> value="1" type="radio">是
+          </section>
+          <!-- <section class="sz_set">
+              <span class="input_bef">是否显示：</span>
+              <div class="onoff">
+                    <label for="integral_use_enable1" class="cb-enable <if condition='$config[integral_use_enable] eq 1'>selected</if>">是</label>
+                    <label for="integral_use_enable0" class="cb-disable <if condition='$config[integral_use_enable] eq 0'>selected</if>">否</label>
+                    <input id="integral_use_enable1" name="integral_use_enable" checked="checked" value="1" type="radio">
+                    <input id="integral_use_enable0" name="integral_use_enable" value="0" type="radio">
+                </div>
+                <p class="notic">用户购买积分商品,结算方式是否必须使用积分,是为必须按照商品规定的积分兑换支付积分，否为可以不适用积分而使用金额购买商品</p>
+          </section> -->
+                
+                
+		<input type="hidden" name="industry_id" value="{$info.industry_id}">
+        <p class="sz_sure">
+          <input type="submit" class="longbtn_inp" value="确定">
+        </p>
+      </div>
+    </form>
+  </div>
+
+
+</div>
+<script>
+    $(document).ready(function(){	
+	    // 表格行点击选中切换
+	    $('#flexigrid > table>tbody >tr').click(function(){
+		    $(this).toggleClass('trSelected');
+		});
+		
+		// 点击刷新数据
+		$('.fa-refresh').click(function(){
+			location.href = location.href;
+		});
+		
+	});
+	
+  	function img_call_back(fileurl_tmp)
+    {
+        $("#thumb").val(fileurl_tmp+"?imageView2/1/w/72/h/72");
+        $("#img_a").attr('href', fileurl_tmp+"?imageView2/1/w/72/h/72");
+        $("#img_i").attr('onmouseover', "layer.tips('<img src="+fileurl_tmp+"?imageView2/1/w/72/h/72>',this,{tips: [1, '#fff']});");
+    }
+	
+    function check(){
+      if($("#industry_name").val()==""){
+        alert("行业名称必须填写");
+        return false;
+      }
+    }
+
+</script>
+</body>
+</html>

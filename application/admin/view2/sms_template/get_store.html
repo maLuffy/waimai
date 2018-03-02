@@ -1,0 +1,93 @@
+<include file="public/layout" />
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page" style="padding: 0px 1% 0 1%;">
+    <div class="flexigrid">
+        <div class="mDiv">
+            <div class="ftitle">
+                <h5>(共{$pager->totalRows}条记录)</h5>
+            </div>
+        </div>
+        <form action="{:U('SmsTemplate/get_store')}" id="search-form" method="get">
+            活动名称:<input type="text" name="store_name" value="{$Think.get.store_name}" placeholder="店铺名称(可模糊查询)">
+            <input type="hidden" name="red_id" value="{$red_id}">
+            <input type="submit" value="查询">
+        </form>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0">
+                    <thead>
+                    <tr>
+                        <th align="left" abbr="article_title" axis="col3" class="">
+                            <div style="text-align: left; width: 600px;" class="">店铺名称</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: center; width: 80px;" class="">店铺账号</div>
+                        </th>
+                        <th align="center" abbr="article_show" axis="col5" class="">
+                            <div style="text-align: center; width: 80px;" class="">店铺电话</div>
+                        </th>
+                        <th align="center" abbr="article_show" axis="col5" class="">
+                            <div style="text-align: center; width: 80px;" class="">店铺logo</div>
+                        </th>
+                        <th style="width:100%" axis="col7">
+                            <div>请选中店铺</div>
+                        </th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table>
+                    <tbody>
+                    <volist name="goodsList" id="list">
+                        <tr>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 600px;">{$list.store_name}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: center; width: 80px;">{$list.user_name}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: center; width: 80px;">{$list.mobile}</div>
+                            </td>
+                            <td align="left" class="">
+                                <img src="{$list.store_logo}" style="width: 80px;height: 80px">
+                                <!-- <div style="text-align: center; width: 80px;">{$list.store_logo}</div> -->
+                            </td>
+                            <td align="" class="" style="width: 100%;">
+                                <if condition='$list[haveing]'>
+                                    <div><a style="color:lightgrey">已存在</a></div>
+                                    <else/>
+                                    <div><a attr_id="{$list.store_id}" attr_logo="{$list.store_logo}" attr_name="{$list.store_name}" attr_mobile="{$list.mobile}" onclick="check(this)">选择</a></div>
+                                </if>
+
+                            </td>
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            </div>
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <!--分页位置-->
+        {$page} </div>
+</div>
+<script type="text/javascript">
+    function check(obj){
+        parent.$("#store_name").val($(obj).attr("attr_name"));
+        parent.$("#store_id").val($(obj).attr("attr_id"))
+        parent.$("#store_mobile").val($(obj).attr("attr_mobile"));
+        parent.$("#store_logo").val($(obj).attr("attr_logo"));
+        parent.$("#a_img").attr('href',$(obj).attr("attr_logo"));
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+          
+    }
+</script>
+</body>
+</html>

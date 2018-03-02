@@ -1,0 +1,141 @@
+<include file="public/layout" />
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+  <div class="fixed-bar">
+    <div class="item-title">
+      <div class="subject">
+        <h3>行业设置</h3>
+        <h5>线下店铺行业设置</h5>
+      </div>
+    </div>
+  </div>
+  <!-- 操作说明 -->
+  <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+    <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+      <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+      <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+    </div>
+    <ul>
+      <li>1.线下店铺行业维护页面.</li>
+    </ul>
+  </div>
+  <div class="flexigrid">
+    <form class="form-horizontal" action="{:U('Shop/data_dic_index')}" id="add_post" method="get">
+      <div class="search_box">
+        <p>
+          <input type="text" name="industry_name" value="{$Think.get.industry_name}" placeholder="请输入行业名称(关键字)">
+          <input type="submit" class="ml_5 btn_inp" value="查询">
+          <!--<a id="addClass" class="ml_20 add_xl_acurr" href="javascript:void(0);">新增类别</a>-->
+          <a class="ml_20 add_xl_acurr" href="{:U('Shop/data_dic_add')}">新增行业名称</a>
+        </p>
+      </div>
+    </form>
+
+    <table class="tab-q1  tab_q2" style="margin-top: 15px;">
+      <thead>
+      <tr>
+        <th class="li1">id</th>
+        <th class="">名称</th>
+        <th class="">是否显示</th>
+        <th class="">操作</th>
+      </tr>
+      </thead>
+      <tbody id="tbody">
+        <foreach name="list" item="vo">
+          <tr>
+            <td class="li1">{$vo.industry_id}</td>
+            <td class="">{$vo.industry_name}</td>
+            <td class="switch"><b id="id_{$vo.industry_id}"  post_id="{$vo.industry_id}" is_show="{$vo.is_show}" class="<if condition="$vo.is_show eq 1">sel</if>"></b></td>
+            <td class="">
+              <a class="edit" href="{:U('Shop/data_dic_add',array('industry_id'=>$vo.industry_id))}">编辑</a>
+              <a class="edit" onclick="deleted('{$vo.industry_id}')">删除</a>
+            </td>
+          </tr>
+        </foreach> 
+      
+
+      </tbody>
+    </table>
+
+    <!--分页位置-->
+    {$page} </div>
+</div>
+<div class="bomb_box">
+  <div class="bomb_con">
+    <form id="add_type_form" method="post" action="/index.php/admin/DataDic/data_type_add">
+      <div class="bomb_head">
+        <h1>
+          新增数据字典类别
+          <span class="close_the"></span>
+        </h1>
+      </div>
+      <div class="bomb_main">
+        <p class="que_p">
+          类别名称：
+          <input type="text" class="text_inp" id="name" name="name">
+        </p>
+        <p class="btn_p">
+          <input type="hidden" class="" value="" name="id">
+          <input type="button" class="btn_qx" value="取消">
+          <input type="button" class="ml_20 btn_tj" onclick="$('#add_type_form').submit();" value="提交">
+        </p>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $(".switch b").click(function () {
+            $(this).toggleClass("sel");
+            var is_show=$(this).attr("is_show");
+            var id=$(this).attr("post_id");
+            $.ajax({
+                type : 'post',
+                url : '{:U("Shop/DataDic_show")}',
+                data : {id:id,is_show:is_show},
+                dataType : 'json',
+                success : function(data){
+                    if(data.status=='1'){
+                        $("#id_"+id).attr("is_show",data.data);
+                        alert("修改成功");
+                    }
+                }
+            })
+        });
+
+        $("#addClass").click(function () {
+            $(".bomb_box").css("display","block");
+        })
+
+        $(".close_the").click(function () {
+            $(".bomb_box").css("display","none");
+        })
+
+        $(".btn_qx").click(function(){
+            $(".bomb_box").css("display","none");
+        })
+
+
+    });
+
+
+    function deleted(str){
+      layer.confirm('确定要删除吗？', {
+                btn: ['确定','取消'] //按钮
+              }, function(){
+                method = "post";
+                action = "{:U('Shop/DataDic_del')}"+"?id="+str;
+                window.location.href=action;
+              }, function(index){
+                layer.close(index);
+              }
+          );
+
+    }
+
+
+</script>
+</body>
+</html>

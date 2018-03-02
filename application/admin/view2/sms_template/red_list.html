@@ -1,0 +1,158 @@
+<include file="public/layout"/>
+<style>
+.look_callback{
+  float: right;
+    margin-right: 15px;
+    color: #fdbd00;
+    font-size: 12px;
+    padding: 1px 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #fdbd00;
+    border-image: initial;
+    border-radius: 6px;
+}
+</style>
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+  <div class="fixed-bar">
+    <div class="item-title">
+      <div class="subject">
+        <h3>包车消息通知</h3>
+      </div>
+      <ul class="tab-base nc-row">
+        <!-- <foreach name="Notice_type.child" item="vo">
+          <li><a href="{:U('Reminder/pick_news_index',array('type'=>$key))}" <if condition="$type eq $key">class="current"</if>><span>{$vo}</span></a></li>
+        </foreach> -->
+        <li><a href="{:U('SmsTemplate/red_list',array('type'=>$key))}" <if condition="$type eq $key">class="current"</if>><span>红包雨列表</span></a></li>
+        <li><a href="{:U('SmsTemplate/red_edit',array('type'=>$key))}" <if condition="$type eq $key">class="current"</if>><span>红包雨设置 </span></a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- 操作说明123 -->
+  <div id="explanation" class="explanation" style="color: rgb(44, 188, 163); background-color: rgb(237, 251, 248); width: 99%; height: 100%;">
+    <div id="checkZoom" class="title"><i class="fa fa-lightbulb-o"></i>
+      <h4 title="提示相关设置操作时应注意的要点">操作提示</h4>
+      <span title="收起提示" id="explanationZoom" style="display: block;"></span>
+    </div>
+    <ul>
+      <li>1.订单提醒：接机、送机、按天包车游订单需要分配才能取消提醒状态.</li>
+    </ul>
+  </div>
+  <div class="flexigrid">
+        <div class="mDiv" style="border-bottom:0px;">
+            <div class="ftitle">
+                <h3>司导管理</h3>
+                <h5>(共{$count_list}条记录)</h5>
+            </div>
+        </div>
+    </div>
+
+    <form action="{:U('StoreN/store_list')}" id="search-form" method="post" onsubmit="return toVaild()">
+        <div class="store_list_top">
+            <select name="auth_status" id="auth_status">
+                <option value="all" <if condition="$Think.post.auth_status eq 'all' ">selected</if>>全部</option>
+                <option value="10" <if condition="$Think.post.auth_status eq 10 ">selected</if>>未认证</option>
+                <option value="1" <if condition="$Think.post.auth_status eq 1 ">selected</if>>认证中</option>
+                <option value="2" <if condition="$Think.post.auth_status eq 2 ">selected</if>>认证通过</option>
+                <option value="3" <if condition="$Think.post.auth_status eq 3 ">selected</if>>认证失败</option>
+            </select>
+
+            地区筛选:
+            <select class="add_select" name="set_out_country_id" id="set_out">
+                <option value="">请选择大洲</option>
+                <foreach name="country_city" item="vo" key="key">
+                    <option value="{$vo.id}" country_name="{$vo.name}" <if condition="$region_name eq $vo.id">selected</if> key="{$key}">{$vo.name}</option>
+                </foreach>
+            </select>
+            <select class="add_select" name="set_out_city_id" id="set_out_city">
+                <option value="">请选择国家</option>
+                <foreach name="region_level_1" item="vo" key="key">
+                    <option value="{$vo.id}" country_name="{$vo.name}" <if condition="$province eq $vo.id">selected</if> key="{$key}">{$vo.name}</option>
+                </foreach>
+            </select>
+            <select class="add_select" name="cityid" id="set_out_city_child">
+                <option value="">请选择城市</option>
+                <foreach name="region_level_2" item="vo" key="key">
+                    <option value="{$vo.id}" country_name="{$vo.name}" <if condition="$city eq $vo.id">selected</if> key="{$key}">{$vo.name}</option>
+                </foreach>
+            </select>
+            <input type="hidden" name="region_name" id="service_country_name" value="{$region_name}">
+            <input type="hidden" name="reg_children_name" id="service_city_name" value="{$province}">
+            <input type="hidden" name="city_id" id="service_city_child_name" value="{$Think.post.city_id}">
+            <input type="hidden" name="city" id="post_city_post" value="{$city}" style="height: 24px;margin-right: 10px;">
+
+            <input type="submit" value="查询" class="btn_q"  style="height: 30px"/>
+            <input type="text" name="store_name" value="{$Think.post.store_name}" placeholder="输入司导昵称/手机号码">
+        </div>
+    </form>
+
+
+
+    <table class="tab-q1  tab_q2" style="margin-top: 30px;">
+        <thead>
+        <tr>
+            <th class="li1">全部</th>
+            <th class="">昵称</th>
+            <th class="">手机号</th>
+            <th class="">状态</th>
+      <th class="">司导工号</th>
+            <th class="">车辆数</th>
+            <th class="">拉黑名单</th>
+            <if condition="$list.auth_status eq 2"><th class="">排序</th></if>
+            <th class="">操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        <foreach name="list" item="list" key="k">
+            <tr>
+                    <td class="li1">{$_GET['p']?$_GET['p']*10-10+$k+1:$k+1}</td>
+
+                <td class="">{$list.nickname}</td>
+                <td class="">{$list.mobile}</td>
+                <td class="">
+                <if condition="$list.drv_id eq 0">未认证<elseif condition="$list.auth_status eq 1">认证中<elseif condition="$list.auth_status eq 2">认证通过<elseif condition="$list.auth_status eq 3">认证失败</if>
+
+                </td>
+        <td class="">
+          <if condition="$list.auth_status eq 2">
+            {$list.drv_code}
+          </if>
+        </td>
+                <td class="">{$list.count_car}</td>
+                <td class="switch"><b id="selid_{$list.seller_id}" seller_id="{$list.seller_id}" is_show="{$list.enabled}" class="<if condition="$list.enabled eq 0">sel</if>"></b></td>
+                <!-- <if condition="$list.auth_status eq 2"> <td class=""></td></if> -->
+                <td class="">
+                <if condition="$list.drv_id gt 0 && $list.auth_status gt 1">
+                    <a class="edit" href="{:U('StoreN/store_info',array('seller_id'=>$list['seller_id'],'drv_id'=>$list['drv_id']))} ">查看</a>
+                    <a class="edit" onclick="deleted('{$list.seller_id}')">删除</a>
+                <elseif condition="$list.auth_status eq 1"><a class="edit" href="{:U('StoreN/store_info',array('seller_id'=>$list['seller_id'],'drv_id'=>$list['drv_id']))} "><span style="color: red">操作</span></a>
+                    <a class="edit" onclick="deleted('{$list.seller_id}')">删除</a>
+                <else/>
+                    <a class="edit" style="color:#8a8a8a">查看</a>
+                    <a class="edit" onclick="deleted('{$list.seller_id}')">删除</a>
+                    <a class="edit" style="color:#ff00e9" onclick="seler_push(this)" seller_id="{$list['seller_id']}">推送认证</a>
+                </if>
+                
+                
+                </td>
+            </tr>
+        </foreach>
+
+        </tbody>
+    </table>
+    {$page}
+</div>
+<script>
+  $(function () {
+        $("#tab_q li").click(function () {
+            $("#tab_q li").removeClass("tab")
+            $(this).addClass("tab")
+        });
+    })
+</script>
+</body>
+</html>

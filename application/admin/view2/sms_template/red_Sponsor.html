@@ -1,0 +1,169 @@
+<include file="public/layout" />
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<style>
+    .err{color:#F00; display:none;}
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>系统 - 红包雨设置 - 赞助商维护</h3>
+                <h5>添加赞助商</h5>
+            </div>
+        </div>
+    </div>
+    <form class="form-horizontal" id="handleposition" action="{:U('SmsTemplate/add_redSponsor')}" method="post" onsubmit="return check();">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="level_name"><em>*</em>活动期号</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="active_num" value="{$info.active_num}" id="active_num" disabled="disabled" class="input-txt">
+                    <span class="err" id="err_level_name"></span>
+                    <p class="notic">设置红包雨活动期号</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>活动名称</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="active_name" value="{$info.active_name}" id="active_name" disabled="disabled" class="input-txt">
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">设置红包雨活动名称</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>赞助商名称</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="store_name" value="{$store_info.store_name}" id="store_name" <if condition='$store_info[store_id]'>readonly="readonly"</if> class="input-txt"><if condition='$store_info[store_id]'><else/><a class="btn red goods_list" data-url="{:U('SmsTemplate/get_store',array('red_id'=>$info.id))}"><i class="fa fa-search"></i>选择店铺</a></if>
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">设置红包雨赞助商名称</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>手机号码</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="store_mobile" value="{$store_info.store_mobile}" <if condition='$store_info[store_id]'>readonly="readonly"</if> id="store_mobile" class="input-txt">
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">设置红包雨赞助商手机号码</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount">店铺logo</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="store_logo" value="{$store_info.store_logo}" id="store_logo" <if condition='$store_info[store_id]'>readonly="readonly"</if> class="input-txt"><a href="javascript:void(0)" target="_blank" id="a_img">查看图片</a>
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">请选择店铺logo</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>赞助金额</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="{$store_info.contribute_money}" id="contribute_money" name="contribute_money" onkeyup="this.value=/^\d+\.?\d{0,2}$/.test(this.value) ? this.value : ''"><!--剩余可赞助金额:{$left_over}元-->
+                    <span class="err" id="err_describe"></span>
+                    <p class="notic">赞助金额</p>
+                </dd>
+            </dl>
+            <!--<dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>中奖概率</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="" id="contribute_ratio" name="contribute_ratio" disabled="disabled" onkeyup="this.value=/^\d+\.?\d{0,2}$/.test(this.value) ? this.value : ''">%
+                    <span class="err" id="err_describe"></span>
+                    <p class="notic">赞助中奖概率</p>
+                </dd>
+            </dl>-->
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>中奖文案</label>
+                </dt>
+                <dd class="opt">
+                    <textarea name="red_desc" style="width: 250px;height: 100px;">{$store_info.red_desc}</textarea>
+                    <span class="err" id="err_describe"></span>
+                    <p class="notic">中奖内容:100字内普通文本，店铺介绍用</p>
+                </dd>
+            </dl>
+            <if condition='$store_info[store_id]'>
+                <input type="hidden" name="act" value="update">
+            <else/>
+                <input type="hidden" name="act" value="add">
+            </if>
+            <input type="hidden" id="store_id" name="store_id" value="{$store_info.store_id}">
+            <input type="hidden" id="red_package_id" name="red_package" value="{$info.id}">
+           <div class="bot"><input type="submit" id="button" class=submit-border submit" value="确认提交" />
+        </div>
+    </form>
+
+    <br/>
+    <br/>
+</div>
+<script type="text/javascript">
+	$(".laydate-icon").focus(function(){
+        laydate({
+            format: 'YYYY-MM-DD hh:mm', // 分隔符可以任意定义，该例子表示只显示年月
+            istime: true, //是否开启时间选择
+            isclear : true,
+            istoday : true,
+            issure : true
+        });
+    });
+
+    function check(){
+    	if($("#store_id").val()=="" || $("#store_name").val()==""){
+    		layer.alert("请选择赞助商");
+    		return false;
+    	}
+        if($("#contribute_money").val()==""){
+            layer.alert("请输入赞助金额!");
+            return false;
+        }
+        if($("#red_desc").val()==""){
+            layer.alert("请输入中奖文案!");
+            return false;
+        }
+        if($("#red_package_id").val()==""){
+            layer.alert("缺少红包活动id!");
+            return false;
+        }
+    }
+
+    $('.goods_list').click(function(){
+        var url = $(this).attr('data-url');
+        layer.open({
+            type: 2,
+            title: '活动关联店铺列表',
+            shadeClose: true,
+            shade: 0.5,
+            area: ['70%', '72%'],
+            content: url,
+        });
+    });
+
+    //var total_money={$info.total_money};
+    /*$('#contribute_money').bind('input propertychange', function() {
+        if(total_money){
+            var zheval=this.value;
+            var contribute_ratio=(zheval/total_money)*100;
+            $("#contribute_ratio").val(contribute_ratio);
+        }
+    });*/
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<include file="public/layout" />
+<style>
+    td{height:40px;line-height:40px; padding-left:20px;}
+    .span_1{
+        float:left;
+        margin-left:0px;
+        height:130px;
+        line-height:130px;
+    }
+    .span_1 ul{list-style:none;padding:0px;}
+    .span_1 ul li{
+        border:1px solid #CCC;
+        height:40px;
+        padding:0px 10px;
+        margin-left:-1px;
+        margin-top:-1px;
+        line-height:40px;
+    }
+    .bomb_box1_t .bomb_con1 {
+        width: 500px;
+        height: 280px;
+        background: #ffffff;
+        border-radius: 5px;
+        position: absolute;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>会员管理 - 创业者信息</h3>
+                <h5>网站系统创业者信息</h5>
+            </div>
+        </div>
+    </div>
+        <input type="hidden" name="user_id" value="{$info.id}"/>
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label>申请单号</label>
+                </dt>
+                <dd class="opt">
+                    <input class="input-txt valid" name="nickname" value="{$info.apply_order_sn}" readonly="" type="text">
+                    <p class="notic"></p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>会员昵称</label>
+                </dt>
+                <dd class="opt">{$info.nickname}</dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>手机号码</label>
+                </dt>
+                <dd class="opt">{$info.mobile}</dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>保证金额</label>
+                </dt>
+                <dd class="opt">{$info.bail_cash}</dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>身份证</label>
+                </dt>
+                <dd class="opt">{$info.certificate}</dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>联系电话</label>
+                </dt>
+                <dd class="opt">{$info.contact_phone}</dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>推荐人电话</label>
+                </dt>
+                <dd class="opt">{$info.recommend_phone}</dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>保证金是否支付</label>
+                </dt>
+                <dd class="opt">
+                    <switch name="$info.pay_status">
+                        <case value="0">未支付</case>
+                        <case value="1">已支付</case>
+                    </switch>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>是否退款</label>
+                </dt>
+                <dd class="opt">
+                    <switch name="$info.is_refund">
+                        <case value="0">未支付</case>
+                        <case value="1">已支付</case>
+                    </switch>
+                </dd>
+            </dl>
+            
+            <dl class="row">
+                <dt class="tit">
+                    <label>备注</label>
+                </dt>
+                <dd class="opt">
+                    {$info.remark}
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>股份合同书</label>
+                </dt>
+                <if condition="$info[status] eq 0">
+                <dd class="opt">
+                    <div class="input-file-show">
+              <span class="show">
+                  <a id="img_a" target="_blank" class="nyroModal" rel="gal" href="{$brand.logo}">
+                    <i id="img_i" class="fa fa-picture-o" onmouseover="layer.tips('<img src={$brand.logo}>',this,{tips: [1, '#fff']});" onmouseout="layer.closeAll();"></i>
+                  </a>
+              </span>
+                        <span class="type-file-box">
+                  <input type="text" id="logo" name="logo" value="{$brand.logo}" class="type-file-text">
+                  <input type="button" name="button" id="button1" value="选择上传..." class="type-file-button">
+                  <input class="type-file-file" onClick="GetUploadify(1,'','brand','img_call_back')" size="30" hidefocus="true" nc_type="change_site_logo"
+                         title="点击前方预览图可查看大图，点击按钮选择文件并提交表单后上传生效">
+              </span>
+                    </div>
+                    <span class="err"></span>
+                    <p class="notic">请上传图片格式文件(审核通过必须上传)</p>
+                </dd>
+                <else/>
+                    <if condition="$info.empowerment">
+                    <dd class="opt">
+                    <input class="input-txt valid" name="empowerment" disabled="disabled" value="{$info.empowerment}" readonly="" type="text"><a href="{$info.empowerment}" target="_blank">点击查看</a>
+                    <p class="notic"></p>
+                    </if>
+                    </dd>
+                </if>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label>当前审核状态</label>
+                </dt>
+                <dd class="opt">
+                    <switch name="$info.status">
+                        <case value="0">待审核</case>
+                        <case value="1">审核成功</case>
+                        <case value="2">审核失败</case>
+                    </switch>
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>审批历史</label>
+                </dt>
+                <dd class="opt">
+                    <table>
+                        <tr>
+                            <td width="120">审核状态</td>
+                            <td width="120">原因</td>
+                            <td width="120">时间</td>
+                        </tr>
+                        <foreach name="info.check_detail" item="vo">
+                        <tr>
+                            <td width="120">
+                                <switch name="$vo.status">
+                                    <case value="0">待审核</case>
+                                    <case value="1">审核成功</case>
+                                    <case value="2">审核失败</case>
+                                </switch>
+                            </td>
+                            <td width="120">{$vo.reason}</td>
+                            <td width="120">{$vo.time|date='Y-m-d',###}</td>
+                        </tr>
+                    </foreach>
+                    </table>
+                    
+                </dd>
+            </dl>
+
+
+            <div class="store_info_btn">
+                <if condition="$info[status] eq 0">
+                    <button class="btn_q reject_t" post_id="{$info.id}" onclick="pull_ok(this)">通过</button>
+                    <button class="btn_q reject_q" post_id="{$info.id}">拒绝</button>
+                    <elseif condition="$info[status] eq 1"/>
+                    <!--<button class="btn_q reject_q" post_id="{$info.id}">拒绝</button>-->
+                    <else />
+                    <!--<button class="btn_q reject_t" post_id="{$info.id}" onclick="pull_ok(this)">通过</button>-->
+                </if>
+            </div>
+
+        </div>
+
+        <div class="bomb_box1">
+            <div class="bomb_con1">
+                <div class="bomb_head1">
+                    <h1>
+                        操作
+                        <span class="close_the"></span>
+                    </h1>
+                </div>
+                <div class="bomb_main1">
+                    <p class="share_btn">
+                        原因
+                        <textarea class="share_q" name="content_2" id="content_2" cols="30" rows="10"></textarea>
+                    </p>
+                    <p class="share_copy_q">
+                        <input type="button" value="提交" post_id="{$info.id}" onclick="pull_no(this)">
+                    </p>
+
+                </div>
+            </div>
+        </div>
+</div>
+<script type="text/javascript">
+
+
+
+
+    var post_id="";
+    var msg = "您确定拒绝通过吗?"; 
+    var content="";
+    var content_2="";
+    $(function () {
+        $(".reject_q").click(function(){
+            $(".bomb_box1").css("display","block");
+        });
+        $(".close_the").click(function(){
+            $(".bomb_box1").css("display","none");
+        });
+    });
+    function pull_ok(obj){
+        post_id=$(obj).attr("post_id");
+        //判断合同股份照片是否上传
+        if($("#img_a").attr('href')==""){
+            layer.alert("请上传股份合同");
+            return false;
+        }
+        var img=$("#img_a").attr('href');
+        msg="您确定通过吗";
+        if (confirm(msg)==true){
+            method = "post";
+            action = "{:url('user/shareholder_ing')}"+"?id="+post_id+"&is_code=1&reason="+content+"&img="+img;
+            window.location.href=action;
+        }
+    }
+    function pull_no(obj){
+        post_id=$(obj).attr("post_id");
+        content_2=$("#content_2").val();
+        msg="您确定拒绝吗";
+        if (confirm(msg)==true){
+            method = "post";
+            action = "{:url('user/shareholder_ing')}"+"?id="+post_id+"&is_code=2&reason="+content_2;
+            window.location.href=action;
+        }
+    }
+
+
+
+    function img_call_back(fileurl_tmp)
+    {
+        $("#logo").val(fileurl_tmp);
+        $("#img_a").attr('href', fileurl_tmp);
+        $("#img_i").attr('onmouseover', "layer.tips('<img src="+fileurl_tmp+">',this,{tips: [1, '#fff']});");
+    }
+
+
+
+</script>
+</body>
+</html>

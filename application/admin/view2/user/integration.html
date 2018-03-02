@@ -1,0 +1,156 @@
+<include file="public/layout" />
+<body style="background-color: rgb(255, 255, 255); overflow: auto; cursor: default; -moz-user-select: inherit;">
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title">
+            <div class="subject">
+                <h3>会员积分记录</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="flexigrid">
+        <div class="mDiv">
+            <form class="navbar-form form-inline" style="float:left" action="{:url('Admin/user/integration')}" id="search-form" method="get">
+                <div class="sDiv">
+                    <div class="sDiv2">
+                        <input type="button" class="btn" value="会员ID:">
+                        <input type="number" name="mem_id" size="30" value="{$Think.get.mem_id}" class="qsbox" placeholder="">
+                    </div>
+                    <div class="sDiv2">
+                        <input type="submit" class="btn"  value="搜索">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="hDiv">
+            <div class="hDivBox">
+                <table cellspacing="0" cellpadding="0">
+                    <thead>
+                    <tr>
+                        <th class="sign" axis="col0">
+                            <div style="width: 24px;"><i class="ico-check"></i></div>
+                        </th>
+                        <th align="left" abbr="article_title" axis="col3" class="">
+                            <div style="text-align: left; width: 80px;" class="">会员id</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 210px;" class="">积分动作</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">积分记录</div>
+                        </th>
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">积分变更时间</div>
+                        </th>
+
+                        <th align="left" abbr="ac_id" axis="col4" class="">
+                            <div style="text-align: left; width: 100px;" class="">积分状态</div>
+                        </th>
+
+                        <th align="center" abbr="article_time" axis="col6" class="">
+                            <div style="text-align: center; width: 100px;" class="">当前有效积分</div>
+                        </th>
+                        <!--<th align="center" axis="col1" class="handle">-->
+                            <!--<div style="text-align: center; width: 150px;">操作</div>-->
+                        <!--</th>-->
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="bDiv" style="height: auto;">
+            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
+                <table>
+                    <tbody>
+                    <foreach name="lists" item="vo" key="k" >
+                        <tr>
+                            <td class="sign">
+                                <div style="width: 24px;"><i class="ico-check"></i></div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 80px;">{$vo.user_id}</div>
+                            </td>
+                            <td align="left" class="">
+                                <div style="text-align: left; width: 210px;">{$vo.desc}</div>
+                            </td>
+                            <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    {$vo.pay_points}
+                                </div>
+                            </td>
+
+                            <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    {$vo.change_time|date="Y-m-d",###}
+                                </div>
+                            </td>
+                            <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    有效
+                                </div>
+                            </td>
+                            <td align="center" class="">
+                                <div style="text-align: center; width: 100px;">
+                                    {$vo.current_points}
+                                </div>
+                            </td>
+                            <!--<td align="" class="" style="width: 100%;">
+                                <div>&nbsp;</div>
+                            </td>-->
+                        </tr>
+                    </foreach>
+                    </tbody>
+                </table>
+            </div>
+            {$page}
+            <div class="iDiv" style="display: none;"></div>
+        </div>
+        <!--分页位置-->
+         </div>
+</div>
+<script>
+    $(document).ready(function(){
+        // 表格行点击选中切换
+        $('#flexigrid > table>tbody >tr').click(function(){
+            $(this).toggleClass('trSelected');
+        });
+
+        // 点击刷新数据
+        $('.fa-refresh').click(function(){
+            location.href = location.href;
+        });
+
+    });
+
+
+    function delfun(obj) {
+        // 删除按钮
+        layer.confirm('确认删除？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: 'post',
+                url: $(obj).attr('data-url'),
+                data : {act:'del',id:$(obj).attr('data-id')},
+                dataType: 'json',
+                success: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        layer.msg(data.msg, {icon: 1});
+                        $(obj).parent().parent().parent().remove();
+                    } else {
+                        layer.alert(data.msg, {icon: 2});
+                    }
+                }
+            })
+        }, function () {
+            layer.closeAll();
+        });
+    }
+</script>
+</body>
+</html>

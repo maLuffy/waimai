@@ -1,0 +1,240 @@
+<include file="public/layout" />
+<style>
+.ncm-goods-gift {
+	text-align: left;
+}
+.ncm-goods-gift ul {
+    display: inline-block;
+    font-size: 0;
+    vertical-align: middle;
+}
+.ncm-goods-gift li {
+    display: inline-block;
+    letter-spacing: normal;
+    margin-right: 4px;
+    vertical-align: top;
+    word-spacing: normal;
+}
+.ncm-goods-gift li a {
+    background-color: #fff;
+    display: table-cell;
+    height: 30px;
+    line-height: 0;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: middle;
+    width: 30px;
+}
+.ncm-goods-gift li a img {
+    max-height: 30px;
+    max-width: 30px;
+}
+
+.ncap-order-style .ncap-order-details{
+	margin:20px auto;
+}
+</style>
+<div class="page">
+  <div class="fixed-bar">
+    <div class="item-title"><a class="back" href="javascript:history.back(-1)" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+      <div class="subject">
+        <h3>商品订单</h3>
+        <h5>商城实物商品交易订单查询及管理</h5>
+      </div>
+      <div class="subject" style="width:62%">
+      		<a style="float:right" class="ncap-btn-big ncap-btn-green" ><i class="fa fa-print"></i>订单状态:
+            <if condition="$order[pay_status] eq 1">
+                已支付
+                <elseif condition="$order[pay_status] eq 2">
+                已取消
+                <else/>
+                未支付
+            </if>
+          </a>
+      </div>
+    </div>
+     
+    
+  </div>
+  <div class="ncap-order-style">
+    <div class="titile">
+      <h3></h3>
+    </div>
+
+
+    <div class="ncap-order-details">
+      
+      <div class="tabs-panels">
+          <div class="misc-info">
+              <h3>基本信息</h3>
+              <dl>
+                  <dt>订单 ID:</dt>
+                  <dd>{$order.id}</dd>
+                  <dt>订单号:</dt>
+                  <dd>{$order.order_sn}</dd>
+                  <dt>会员:</dt>
+                  <dd>{$order.nickname}  ID: <span style="color: red"></span>{$order.user_id}</dd>
+              </dl>
+              <dl>
+                  <dt>E-Mail:</dt>
+                  <dd>{$order.email}</dd>
+                  <dt>电话:</dt>
+                  <dd>{$order.mobile}</dd>
+                  <dt>应付金额:</dt>
+                  <dd>{$order.amount}</dd>
+              </dl>
+              <dl>
+                  <dt>实付金额:</dt>
+                  <dd>{$order.order_amount}
+                  </dd>
+                  <dt>下单时间:</dt>
+                  <dd>{$order.add_time|date='Y-m-d H:i',###}</dd>
+                  <dt>订单状态:</dt>
+                  <dd><if condition="$order[pay_status] eq 1">
+                      已支付
+                      <elseif condition="$order[pay_status] eq 2">
+                      已取消
+                      <else/>
+                      未支付
+                  </if>
+                </dd>
+              </dl>
+              <dl>
+                  <dt>支付方式:</dt>
+                  <dd><if condition="$order[pay_status] lt 1">
+                      未支付
+                      <else/>
+                      已支付
+                  </if></dd>
+                  <dt>发票抬头:</dt>
+                  <dd>{$order.invoice_name|default='暂无'}</dd>
+                  <dt>发票类型:</dt>
+                  <dd>
+                    <if condition="$order[invoice_type] eq 1">
+                        个人
+                      <else/>
+                        公司
+                    </if>
+                  </dd>
+              </dl>
+          </div>
+        
+        <div class="addr-note">
+          <h4>下单人信息</h4>
+          <dl>
+            <dt>下单人：</dt>
+            <dd>{$order.nickname}</dd>
+            <dt>联系方式：</dt>
+            <dd>{$order.mobile}</dd>
+          </dl>
+          <dl>
+            <dt>收货地址：</dt>
+            <dd>{$address2}</dd>
+          </dl>
+          <dl>
+            <dt>邮编：</dt>
+            	<dd><if condition="$order.zipcode neq ''"> {$order.zipcode}<else/>无</if></dd>
+          </dl>
+          <dl>
+           		<dt>说明：</dt>
+            	<dd>{$order.remark}</dd>
+          	</dl>
+        </div>
+  
+        <div class="contact-info">
+          <h3>费用信息</h3>
+          <dl>
+            <dt>小计：</dt>
+            <dd>{$order.amount}</dd>
+            <dt>积分 (-{$order.integral_money}):</dt>
+            <dd>-{$order.integral_money}</dd>
+            <dt>优惠券抵扣：</dt>
+            <dd>-{$order.coupon_price}</dd>
+          </dl>
+          <dl>
+            <!--<dt>余额抵扣：</dt>-->
+            <!--<dd>-{$order.user_money}</dd>-->
+            <dt>价格调整: </dt>
+            <!--<dd>减:{$order.discount}</dd>-->
+            <dd>减:{$order.order_prom_amount}</dd>
+            <dt>应付 : </dt>
+            <dd>{$order.order_amount}</dd>
+          </dl>
+        </div>
+
+        <div class="goods-info">
+          <h4>线下店铺信息</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>店铺编号</th>
+                <th>店铺图片</th>
+                <th>店铺简介</th>
+                <th>店铺标签</th>
+                <th>店铺电话</th>
+                <th>省市区</th>
+                <th>地址</th>
+                <th>人均消费</th>
+              </tr>
+            </thead>
+            <tbody>
+           	<tr>
+                <td class="w60">{$order.shop.shop_id}</td>
+                <!--{:U('Admin/Shop_order/detail',array('order_sn'=>$list['order_sn']))}   http://shop.ruitukeji.cn:8504/html/store-detail.html?shop_id=1-->
+                <td class="w30"><div class="goods-thumb"><a href="http://shop.ruitukeji.cn:8504/html/store-detail.html?shop_id={$order.shop.shop_id}" target="_blank"><img alt="" src="{$order.shop.shop_img}" /> </a></div></td>
+                <td style="text-align: left;"> {$order.shop.shop_desc|msubstr=0,20,'utf-8',true}<br/></td>
+                <td class="w80">{$order.shop.location}</td>
+                <td class="w60">{$order.shop.telephone}</td>
+                <td class="w100">{$address}</td>
+                <td class="w60">{$order.shop.address}</td>
+                <td class="w80">{$order.shop.consume_per}</td>
+              </tr>
+          </table>
+        </div>
+        <br/>
+        <div class="total-amount contact-info">
+          <h3>订单总额：<strong class="red_common">￥{$order.order_amount}</strong></h3>
+        </div>
+        <!-- <div class="goods-info">
+          <h4>操作记录</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>操作者</th>
+                <th>操作时间</th>
+                <th>订单状态</th>
+                <th>付款状态</th>
+                <th>发货状态</th>
+                <th>描述</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody>
+            <volist name="action_log" id="log">
+	           	<tr>
+                    <if condition="$log[user_type] eq 2">
+	                    <td class="text-center">用户({$users[$log[action_user]]})</td>
+                    <elseif condition="$log[user_type] eq 1"/>
+                        <td class="text-center">商家({$sellers[$log[action_user]]})</td>
+                    <else/>
+                        <td class="text-center">平台管理员</td>
+                    </if>
+	                 <td class="text-center">{$log.log_time|date='Y-m-d H:i:s',###}</td>
+	                 <td class="text-center">{$order_status[$log[order_status]]}</td>
+	                 <td class="text-center">{$pay_status[$log[pay_status]]}<if condition="$order['pay_code'] eq 'code'"><span style="color: red">(货到付款)</span></if></td>
+	                 <td class="text-center">{$shipping_status[$log[shipping_status]]}</td>
+	                 <td class="text-center">{$log.status_desc}</td>
+	                 <td class="text-center">{$log.action_note}</td>
+	             </tr>
+              </volist>
+          </table>
+        </div> -->
+      </div>
+  	</div>
+  </div>
+</div>
+<script type="text/javascript">
+     
+</script>
+</body>
+</html>

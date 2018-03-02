@@ -1,0 +1,157 @@
+<include file="public/layout" />
+<style>
+    td{height:40px;line-height:40px; padding-left:20px;}
+    .span_1{
+        float:left;
+        margin-left:0px;
+        height:130px;
+        line-height:130px;
+    }
+    .span_1 ul{list-style:none;padding:0px;}
+    .span_1 ul li{
+        border:1px solid #CCC;
+        height:40px;
+        padding:0px 10px;
+        margin-left:-1px;
+        margin-top:-1px;
+        line-height:40px;
+    }
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>会员管理 - 会员信息</h3>
+                <h5>网站系统会员管理会员信息</h5>
+            </div>
+        </div>
+    </div>
+    <form class="form-horizontal" id="user_form" method="post">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label>会员昵称：</label>
+                </dt>
+                <dd class="opt">
+                    {$users.nickname}
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>手机号码：</label>
+                </dt>
+                <dd class="opt">
+                    {$users.mobile}
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>首笔消费金额：</label>
+                </dt>
+                <dd class="opt">
+                    {$users.first_money}元
+                    <span></span>
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>累计消费金额：</label>
+                </dt>
+                <dd class="opt">
+                    {$users.total_money}元
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="tit">
+                    <label>会员等级：</label>
+                </dt>
+                <dd class="opt">
+                    <select id="rank" name="level_id">
+                        <option value="">选择等级</option>
+                        <foreach name="rank_name" key="rkey" item="rank">
+                            <option <if condition="$users['level'] eq $rkey">selected='selected'</if> value="{$rkey}">{$rank}</option>
+                        </foreach>
+                    </select>
+                    <span class="member_rank"></span>
+                </dd>
+            </dl>
+
+            <div class="bot"><a href="JavaScript:void(0);" onclick="checkUserUpdate();" class="ncap-btn-big ncap-btn-green">确认提交</a></div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    function checkUserUpdate(){
+        var error = "";
+        if(!$("#rank").val())
+        {
+            error += "会员等级不能为空\n";
+        }
+
+        if(!$(".member_rank select").val())
+            error += "会员等级名称不能为空\n";
+
+        if(error){
+            layer.alert(error, {icon: 2});  //alert(error);
+            return false;
+        }
+
+        var url = "{:U('Admin/user/consumeEditMember',array('id' => $_GET['id'] ))}";
+        $.ajax({
+            url:url,
+            type:'post',
+            data:$('#user_form').serialize(),
+            dataType:'JSON',
+            success:function(data){
+                if(data.status ==1)
+                {
+                    layer.alert(data.msg,{icon:1});
+                    window.location.href="{:U('Admin/user/consumeQuery')}";
+                    return
+                }
+                layer.alert(data.msg,{icon:2});
+            },
+            error:function(){
+                layer.alert('网络连接失败，请稍后再试！');
+            }
+        })
+    }
+
+    $(function () {
+        $("#rank").change(function () {
+            $.get("{:url('Admin/user/getRelation')}/id/"+$(this).val(),"",function (data) {
+                var level_name = "{$users.user_relation}";
+                if( data.status == 1 )
+                {
+                    var options = data.result;
+                    var selectVal = "";
+                    var opt = "<select name='relation_level'><option value=''>请选择</option>";
+                    for( var x in options )
+                    {
+                        if(options[x]["id"] == level_name)
+                            selectVal = "selected='selected'"
+                        else
+                            selectVal = "";
+                        opt += "<option value='"+options[x]["id"]+"' "+ selectVal +">" + options[x]["level_name"] + "</option>";
+                    }
+                }
+                opt += "</select>";
+                $(".member_rank").html(opt);
+            });
+        })
+
+        <if condition="$users['level']">
+            $("#rank").val('{$users.level}').trigger("change");
+        </if>
+    })
+</script>
+</body>
+</html>

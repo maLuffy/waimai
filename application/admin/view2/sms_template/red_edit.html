@@ -1,0 +1,198 @@
+<include file="public/layout" />
+<script src="__ROOT__/public/static/js/layer/laydate/laydate.js"></script>
+<style>
+    .err{color:#F00; display:none;}
+</style>
+<body style="background-color: #FFF; overflow: auto;">
+<div id="toolTipLayer" style="position: absolute; z-index: 9999; display: none; visibility: visible; left: 95px; top: 573px;"></div>
+<div id="append_parent"></div>
+<div id="ajaxwaitid"></div>
+<div class="page">
+    <div class="fixed-bar">
+        <div class="item-title"><a class="back" href="javascript:history.back();" title="返回列表"><i class="fa fa-arrow-circle-o-left"></i></a>
+            <div class="subject">
+                <h3>系统 - 红包雨设置</h3>
+                <h5>添加红包雨</h5>
+            </div>
+        </div>
+    </div>
+    <form class="form-horizontal" id="handleposition" action="{:U('SmsTemplate/red_edit')}" method="post" onsubmit="return check();">
+        <div class="ncap-form-default">
+            <dl class="row">
+                <dt class="tit">
+                    <label for="level_name"><em>*</em>活动期号</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="active_num" value="{$info.active_num}" id="active_num" class="input-txt">
+                    <span class="err" id="err_level_name"></span>
+                    <p class="notic">设置红包雨活动期号</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>活动名称</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="active_name" value="{$info.active_name}" id="active_name" class="input-txt">
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">设置红包雨活动名称</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>活动开始日期</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" name="start_time" id="start_time" value="<if condition='$info[id]'>{$info.start_time|date='Y-m-d',###}</if>" class="laydate-icon" placeholder="请选择时间">
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">设置红包雨活动开始日期</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount"><em>*</em>活动结束日期</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" id="end_time" name="end_time" value="<if condition='$info[id]'>{$info.end_time|date='Y-m-d',###}</if>" class="laydate-icon" placeholder="请选择时间">
+                    <span class="err" id="err_amount"></span>
+                    <p class="notic">设置红包雨活动结束日期</p>
+                </dd>
+            </dl>
+            <!-- <dl class="row">
+                <dt class="tit">
+                    活动状态
+                </dt>
+                <dd class="opt">
+                    <textarea  name="describe" class="tarea" rows="6">{$info.describe}</textarea>
+                    <span class="err" id="err_describe"></span>
+                    <p class="notic">活动状态</p>
+                </dd>
+            </dl> -->
+
+            <!--<dl class="row">-->
+                <!--<dt class="tit">-->
+                    <!--<label for="discount"><em>*</em>折扣率</label>-->
+                <!--</dt>-->
+                <!--<dd class="opt">-->
+                    <!--<input type="text" name="discount" value="{$info.discount}" id="discount" class="input-txt" onkeyup="this.value=this.value.replace(/[^\d]/g,'')">-->
+                    <!--<span class="err" id="err_discount"></span>-->
+                    <!--<p class="notic">折扣率单位为百分比，如输入90，表示该会员等级的用户可以以商品原价的90%购买</p>-->
+                <!--</dd>-->
+            <!--</dl>-->
+
+            <dl class="row">
+                <dt class="tit">
+                    <label for="amount">活动金额</label>
+                </dt>
+                <dd class="opt">
+                    <input type="text" value="{$info.total_money}" readonly="readonly" id="total_money" name="total_money" onkeyup="this.value=/^\d+\.?\d{0,2}$/.test(this.value) ? this.value : ''">{$info.describe}
+                    <span class="err" id="err_describe"></span>
+                    <p class="notic">获取店铺赞助的金额总金额</p>
+                </dd>
+            </dl>
+            <dl class="row">
+                <dt class="tit">活动开关</dt>
+                <dd class="opt">
+                    <div class="onoff">
+                        <label for="integral_use_enable1" class="cb-enable <if condition='$info[status] eq 1'>selected</if>">是</label>
+                        <label for="integral_use_enable0" class="cb-disable <if condition='$info[status] eq 0'>selected</if>">否</label>
+                        <input id="integral_use_enable1" name="status" <if condition='$info[status] eq 1'>checked="checked"</if> value="1" type="radio">
+                        <input id="integral_use_enable0" name="status" <if condition='$info[status] eq 0'>checked="checked"</if> value="0" type="radio">
+                    </div>
+                    <p class="notic">设置活动开关</p>
+                </dd>
+            </dl>
+            <input type="hidden" name="red_id" value="{$info.id}">
+            <if condition='$info[not_save] neq 1'>
+            <div class="bot"><input type="submit" id="button" class=submit-border submit" value="确认提交" />
+            </if>
+        </div>
+    </form>
+
+    <table class="tab-q1">
+    	<h5>赞助商列表</h5>
+        <thead>
+        <tr>
+			<th>id</th>
+            <th>店铺名称</th>
+			<th>店铺logo</th>
+			<th>赞助金额</th>
+            <th>中奖概率</th>
+            <th>赞助文案</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+            <volist name="store_list" id="list" empty="暂无数据">
+            <tr>
+            	<td>{$list.id}</td>
+				<td>{$list.store_name}</td>
+                <td><a href="{$list.store_logo}" target="_blank"></a><img src="{$list.store_logo}" style="width: 80px;height: 80px;"></td>
+				<td>{$list.contribute_money}</td>
+				<td>
+				{$list.money_pro}%
+				</td>
+                <td>{$list.red_desc}</td>
+                <td >
+                	<a class="edit" href="{:U('SmsTemplate/red_Sponsor',array('store_id'=>$list['id']))}">编辑</a>
+                	<!-- <a class="edit" href="{:U('SmsTemplate/red_Sponsor',array('id'=>$list['id']))}">编辑</a> -->
+                    <a class="edit" href="{:U('SmsTemplate/red_Sponsor_del',array('id'=>$list['id']))}" onclick="return confirm('确定将此记录删除?')">删除</a>
+                    <!-- <if condition="$list.is_del heq 1">
+                        <a class="delete" data-bid="{$list.id}" is_del="{$list.is_del}" href="javascript:void(0);">取消禁用</a>
+                    <else/>
+                        <a class="delete" data-bid="{$list.id}" is_del="{$list.is_del}" href="javascript:void(0);">确认禁用</a>
+                    </if> -->
+                </td>
+            </tr>
+            </volist>
+        </tbody>
+    </table>
+
+
+    <br/>
+    <br/>
+</div>
+<script type="text/javascript">
+	$(".laydate-icon").focus(function(){
+        laydate({
+            format: 'YYYY-MM-DD hh:mm', // 分隔符可以任意定义，该例子表示只显示年月
+            istime: true, //是否开启时间选择
+            isclear : true,
+            istoday : true,
+            issure : true
+        });
+    });
+
+    $('.goods_list').click(function(){
+        var url = $(this).attr('data-url');
+        layer.open({
+            type: 2,
+            title: '活动关联店铺列表',
+            shadeClose: true,
+            shade: 0.5,
+            area: ['70%', '72%'],
+            content: url,
+        });
+    });
+
+
+
+    function check(){
+        var startTime=$("#start_time").val();
+        var endTime=$("#end_time").val();
+        var startTime_n = Date.parse(new Date(startTime));
+        startTime_n = startTime_n / 1000;
+        var endTime_n = Date.parse(new Date(endTime));
+        endTime_n = endTime_n / 1000;
+        if(startTime_n>endTime_n){
+            layer.alert("开始时间不能大于结束时间!!");
+            return false;
+        }
+    	if($("#end_time").val()=="" || $("#start_time").val()=="" || $("#active_name").val()=="" || $("#active_num").val()==""){
+    		alert("必填项请填写完整");
+    		return false;
+    	}
+    }
+</script>
+</body>
+</html>
